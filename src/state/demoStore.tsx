@@ -117,14 +117,24 @@ function reducer(state: State, action: Action): State {
     case 'EXEC_TRADE': {
       return { ...state, trades: state.trades.map(t=> t.id===action.id ? { ...t, status:'Executed' } : t) }
     }
-    case 'RUN_NIGHTLY': {
-      // randomize risk for submitted/approved apps
-      const apps = state.applications.map(a => {
-        if(a.status==='Submitted' || a.status==='Approved'){
-          return { ...a, riskScore: Math.floor(60 + Math.random()*40) }
-        }
-        return a
-      })
+   case 'RUN_NIGHTLY': {
+  // randomize risk for submitted/approved apps
+  const apps = state.applications.map(a => {
+    if (a.status === 'Submitted' || a.status === 'Approved') {
+      return { ...a, riskScore: Math.floor(60 + Math.random() * 40) }
+    }
+    return a
+  })
+
+  // ✅ keep the union type narrow with `as const`
+  const pays = state.payments.map(p => (
+    Math.random() < 0.2 && p.status === 'Due'
+      ? { ...p, status: 'Late' as const }
+      : p
+  ))
+
+  return { ...state, applications: apps, payments: pays }
+}
       // randomly mark payments late
       const pays = state.payments.map(p => (Math.random()<0.2 && p.status==='Due') ? { ...p, status:'Late' } : p)
       return { ...state, applications: apps, payments: pays }
