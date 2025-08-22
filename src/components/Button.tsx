@@ -1,0 +1,1 @@
+export function Button({children,className='',...p}:{children:React.ReactNode;className?:string}&React.ButtonHTMLAttributes<HTMLButtonElement>){return <button className={`inline-flex items-center gap-2 rounded-xl px-3 py-2 border hover:opacity-90 ${className}`} {...p}>{children}</button>}
